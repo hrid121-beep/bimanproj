@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page - FlightEasy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Open Sans', sans-serif;
+            background: #F8F9FA;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .device-frame {
+            width: 375px;
+            height: 812px;
+            background: #000;
+            border-radius: 40px;
+            padding: 10px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+        
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: #F8F9FA;
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .header {
+            background: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .location {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            color: #212529;
+            cursor: pointer;
+        }
+        
+        .location-icon {
+            font-size: 18px;
+            color: #0066CC;
+        }
+        
+        .profile-btn {
+            width: 40px;
+            height: 40px;
+            background: #0066CC;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .notification-dot {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 10px;
+            height: 10px;
+            background: #DC3545;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+        
+        .content {
+            padding: 20px;
+            overflow-y: auto;
+            height: calc(100% - 76px);
+        }
+        
+        .welcome-section {
+            margin-bottom: 24px;
+        }
+        
+        .welcome-text {
+            font-size: 24px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 4px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            color: #6c757d;
+        }
+        
+        .search-bar {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .search-bar:hover {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+        }
+        
+        .search-icon {
+            color: #6c757d;
+            font-size: 20px;
+        }
+        
+        .search-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            color: #212529;
+        }
+        
+        .search-input::placeholder {
+            color: #ADB5BD;
+        }
+        
+        .voice-btn {
+            width: 36px;
+            height: 36px;
+            background: #F8F9FA;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .voice-btn:hover {
+            background: #E9ECEF;
+            transform: scale(1.1);
+        }
+        
+        .voice-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .recent-searches {
+            margin-bottom: 24px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 12px;
+        }
+        
+        .recent-search-scroll {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        
+        .recent-search-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .search-chip {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            min-width: 100px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+        
+        .search-chip:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .route {
+            font-size: 14px;
+            font-weight: 600;
+            color: #212529;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            justify-content: center;
+        }
+        
+        .arrow {
+            color: #6c757d;
+            font-size: 12px;
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .action-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .action-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .action-card:active {
+            transform: scale(0.98);
+        }
+        
+        .action-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        
+        .action-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #212529;
+        }
+        
+        .promo-section {
+            margin-bottom: 20px;
+        }
+        
+        .promo-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 24px;
+            border-radius: 16px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .promo-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .promo-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .promo-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .promo-bg {
+            position: absolute;
+            right: -20px;
+            bottom: -20px;
+            font-size: 120px;
+            opacity: 0.1;
+        }
+    </style>
+</head>
+<body>
+    <div class="device-frame">
+        <div class="screen">
+            <div class="header">
+                <div class="location">
+                    <span class="location-icon">📍</span>
+                    <span>Dhaka</span>
+                </div>
+                <div class="profile-btn">
+                    T
+                    <div class="notification-dot"></div>
+                </div>
+            </div>
+            
+            <div class="content">
+                <div class="welcome-section">
+                    <h1 class="welcome-text">Good morning, Tahsin</h1>
+                    <p class="subtitle">Where to today?</p>
+                </div>
+                
+                <div class="search-bar">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-input" placeholder="Search flights..." readonly>
+                    <div class="voice-btn">
+                        <span>🎤</span>
+                    </div>
+                </div>
+                
+                <div class="recent-searches">
+                    <h2 class="section-title">Recent Searches</h2>
+                    <div class="recent-search-scroll">
+                        <div class="search-chip">
+                            <div class="route">
+                                DAC <span class="arrow">→</span> CTG
+                            </div>
+                        </div>
+                        <div class="search-chip">
+                            <div class="route">
+                                DAC <span class="arrow">→</span> SYL
+                            </div>
+                        </div>
+                        <div class="search-chip">
+                            <div class="route">
+                                CTG <span class="arrow">→</span> DAC
+                            </div>
+                        </div>
+                        <div class="search-chip">
+                            <div class="route">
+                                DAC <span class="arrow">→</span> CXB
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quick-actions">
+                    <div class="action-card">
+                        <div class="action-icon">✈️</div>
+                        <div class="action-label">Book Flight</div>
+                    </div>
+                    <div class="action-card">
+                        <div class="action-icon">📋</div>
+                        <div class="action-label">My Trips</div>
+                    </div>
+                    <div class="action-card">
+                        <div class="action-icon">🎫</div>
+                        <div class="action-label">Check In</div>
+                    </div>
+                    <div class="action-card">
+                        <div class="action-icon">📊</div>
+                        <div class="action-label">Flight Status</div>
+                    </div>
+                </div>
+                
+                <div class="promo-section">
+                    <div class="promo-card">
+                        <div class="promo-content">
+                            <h3 class="promo-title">Summer Sale!</h3>
+                            <p class="promo-subtitle">Save up to 30% on domestic flights</p>
+                        </div>
+                        <div class="promo-bg">✈️</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

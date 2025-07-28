@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results - FlightEasy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Open Sans', sans-serif;
+            background: #F8F9FA;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .device-frame {
+            width: 375px;
+            height: 812px;
+            background: #000;
+            border-radius: 40px;
+            padding: 10px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+        
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: #F8F9FA;
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .header {
+            background: white;
+            padding: 16px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+        
+        .back-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: #F8F9FA;
+        }
+        
+        .route-info {
+            flex: 1;
+        }
+        
+        .route {
+            font-size: 18px;
+            font-weight: 600;
+            color: #212529;
+        }
+        
+        .date-info {
+            font-size: 14px;
+            color: #6c757d;
+        }
+        
+        .edit-btn {
+            font-size: 14px;
+            color: #0066CC;
+            cursor: pointer;
+        }
+        
+        .sort-bar {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        
+        .sort-bar::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .sort-chip {
+            padding: 6px 12px;
+            background: #F8F9FA;
+            border: 1px solid #E9ECEF;
+            border-radius: 20px;
+            font-size: 12px;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+        
+        .sort-chip.active {
+            background: #E6F2FF;
+            border-color: #0066CC;
+            color: #0066CC;
+        }
+        
+        .content {
+            padding: 16px;
+            overflow-y: auto;
+            height: calc(100% - 120px);
+        }
+        
+        .results-summary {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 16px;
+        }
+        
+        .flight-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .flight-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .airline-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        
+        .airline-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .airline-logo {
+            width: 32px;
+            height: 32px;
+            background: #E9ECEF;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        .airline-name {
+            font-size: 14px;
+            color: #495057;
+        }
+        
+        .flight-number {
+            font-size: 12px;
+            color: #6c757d;
+        }
+        
+        .menu-dots {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #6c757d;
+        }
+        
+        .flight-timeline {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .time-block {
+            text-align: center;
+        }
+        
+        .time {
+            font-size: 20px;
+            font-weight: 700;
+            color: #212529;
+        }
+        
+        .airport {
+            font-size: 14px;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .terminal {
+            font-size: 12px;
+            color: #6c757d;
+        }
+        
+        .flight-path {
+            flex: 1;
+            margin: 0 16px;
+            position: relative;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .path-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: #E9ECEF;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .plane-icon {
+            position: relative;
+            z-index: 1;
+            font-size: 20px;
+        }
+        
+        .flight-details {
+            display: flex;
+            gap: 16px;
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 12px;
+        }
+        
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .price-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 12px;
+            border-top: 1px solid #F8F9FA;
+        }
+        
+        .price {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+        
+        .current-price {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0066CC;
+        }
+        
+        .original-price {
+            font-size: 16px;
+            color: #6c757d;
+            text-decoration: line-through;
+        }
+        
+        .discount-badge {
+            background: #28A745;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .scarcity {
+            font-size: 12px;
+            color: #DC3545;
+            font-weight: 600;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            padding: 8px 16px;
+            border: 1px solid #E9ECEF;
+            background: white;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            background: #F8F9FA;
+        }
+        
+        .select-btn {
+            background: #0066CC;
+            color: white;
+            border: none;
+        }
+        
+        .select-btn:hover {
+            background: #0052a3;
+        }
+        
+        .filter-fab {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        
+        .filter-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #DC3545;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="device-frame">
+        <div class="screen">
+            <div class="header">
+                <div class="header-top">
+                    <div class="back-btn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#212529" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                    </div>
+                    <div class="route-info">
+                        <div class="route">DAC → CTG</div>
+                        <div class="date-info">15 Jul • 1 Adult • Economy</div>
+                    </div>
+                    <div class="edit-btn">Edit</div>
+                </div>
+                <div class="sort-bar">
+                    <div class="sort-chip active">Best Value</div>
+                    <div class="sort-chip">Lowest Price</div>
+                    <div class="sort-chip">Shortest</div>
+                    <div class="sort-chip">Earliest</div>
+                    <div class="sort-chip">Latest</div>
+                </div>
+            </div>
+            
+            <div class="content">
+                <div class="results-summary">12 flights found</div>
+                
+                <div class="flight-card">
+                    <div class="airline-header">
+                        <div class="airline-info">
+                            <div class="airline-logo">UB</div>
+                            <div>
+                                <div class="airline-name">US-Bangla</div>
+                                <div class="flight-number">BS105</div>
+                            </div>
+                        </div>
+                        <div class="menu-dots">⋮</div>
+                    </div>
+                    
+                    <div class="flight-timeline">
+                        <div class="time-block">
+                            <div class="time">08:30</div>
+                            <div class="airport">DAC</div>
+                            <div class="terminal">Terminal 1</div>
+                        </div>
+                        <div class="flight-path">
+                            <div class="path-line"></div>
+                            <div class="plane-icon">✈️</div>
+                        </div>
+                        <div class="time-block">
+                            <div class="time">09:35</div>
+                            <div class="airport">CTG</div>
+                            <div class="terminal">Terminal A</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flight-details">
+                        <div class="detail-item">
+                            <span>⏱</span>
+                            <span>1h 5m</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>•</span>
+                            <span>Non-stop</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>🧳</span>
+                            <span>20kg</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>🍽️</span>
+                            <span>Snack</span>
+                        </div>
+                    </div>
+                    
+                    <div class="price-section">
+                        <div>
+                            <div class="price">
+                                <span class="current-price">৳3,500</span>
+                                <span class="original-price">৳4,500</span>
+                                <span class="discount-badge">Save 22%</span>
+                            </div>
+                            <div class="scarcity">Only 3 seats left!</div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn">♡</button>
+                            <button class="action-btn select-btn">Select →</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flight-card">
+                    <div class="airline-header">
+                        <div class="airline-info">
+                            <div class="airline-logo" style="background: #006B3C; color: white;">BG</div>
+                            <div>
+                                <div class="airline-name">Biman Bangladesh</div>
+                                <div class="flight-number">BG401</div>
+                            </div>
+                        </div>
+                        <div class="menu-dots">⋮</div>
+                    </div>
+                    
+                    <div class="flight-timeline">
+                        <div class="time-block">
+                            <div class="time">10:15</div>
+                            <div class="airport">DAC</div>
+                            <div class="terminal">Terminal 2</div>
+                        </div>
+                        <div class="flight-path">
+                            <div class="path-line"></div>
+                            <div class="plane-icon">✈️</div>
+                        </div>
+                        <div class="time-block">
+                            <div class="time">11:25</div>
+                            <div class="airport">CTG</div>
+                            <div class="terminal">Terminal B</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flight-details">
+                        <div class="detail-item">
+                            <span>⏱</span>
+                            <span>1h 10m</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>•</span>
+                            <span>Non-stop</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>🧳</span>
+                            <span>23kg</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>🍽️</span>
+                            <span>Meal</span>
+                        </div>
+                    </div>
+                    
+                    <div class="price-section">
+                        <div>
+                            <div class="price">
+                                <span class="current-price">৳4,200</span>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn">♡</button>
+                            <button class="action-btn select-btn">Select →</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flight-card">
+                    <div class="airline-header">
+                        <div class="airline-info">
+                            <div class="airline-logo" style="background: #FF6B35; color: white;">NV</div>
+                            <div>
+                                <div class="airline-name">Novoair</div>
+                                <div class="flight-number">VQ951</div>
+                            </div>
+                        </div>
+                        <div class="menu-dots">⋮</div>
+                    </div>
+                    
+                    <div class="flight-timeline">
+                        <div class="time-block">
+                            <div class="time">14:30</div>
+                            <div class="airport">DAC</div>
+                            <div class="terminal">Terminal 1</div>
+                        </div>
+                        <div class="flight-path">
+                            <div class="path-line"></div>
+                            <div class="plane-icon">✈️</div>
+                        </div>
+                        <div class="time-block">
+                            <div class="time">15:40</div>
+                            <div class="airport">CTG</div>
+                            <div class="terminal">Terminal A</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flight-details">
+                        <div class="detail-item">
+                            <span>⏱</span>
+                            <span>1h 10m</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>•</span>
+                            <span>Non-stop</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>🧳</span>
+                            <span>20kg</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>☕</span>
+                            <span>Beverage</span>
+                        </div>
+                    </div>
+                    
+                    <div class="price-section">
+                        <div>
+                            <div class="price">
+                                <span class="current-price">৳3,800</span>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn">♡</button>
+                            <button class="action-btn select-btn">Select →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="filter-fab">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#212529" stroke-width="2">
+                    <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>
+                </svg>
+                <div class="filter-badge">3</div>
+            </div>

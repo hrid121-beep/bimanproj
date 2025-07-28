@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - FlightEasy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Open Sans', sans-serif;
+            background: #F8F9FA;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .device-frame {
+            width: 375px;
+            height: 812px;
+            background: #000;
+            border-radius: 40px;
+            padding: 10px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+        
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: #F8F9FA;
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: white;
+            padding: 16px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+        
+        .back-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: #F8F9FA;
+        }
+        
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #212529;
+        }
+        
+        .security-banner {
+            background: #E8F5E9;
+            padding: 12px 16px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .lock-icon {
+            font-size: 20px;
+        }
+        
+        .security-text {
+            flex: 1;
+        }
+        
+        .security-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2E7D32;
+        }
+        
+        .security-subtitle {
+            font-size: 12px;
+            color: #1B5E20;
+        }
+        
+        .timer {
+            font-size: 14px;
+            font-weight: 600;
+            color: #DC3545;
+        }
+        
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .payment-methods {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 16px;
+        }
+        
+        .method-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .method-card {
+            border: 2px solid #E9ECEF;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .method-card:hover {
+            border-color: #DEE2E6;
+            background: #F8F9FA;
+        }
+        
+        .method-card.active {
+            border-color: #0066CC;
+            background: #E6F2FF;
+        }
+        
+        .method-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        
+        .method-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #212529;
+        }
+        
+        .method-full {
+            grid-column: span 2;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px 16px;
+            text-align: left;
+        }
+        
+        .method-full .method-icon {
+            margin: 0;
+        }
+        
+        .method-details {
+            flex: 1;
+        }
+        
+        .method-subtitle {
+            font-size: 12px;
+            color: #6c757d;
+        }
+        
+        .card-form {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .required {
+            color: #DC3545;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #E9ECEF;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #212529;
+            transition: all 0.3s ease;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #0066CC;
+            box-shadow: 0 0 0 3px rgba(0,102,204,0.1);
+        }
+        
+        .card-number-input {
+            position: relative;
+        }
+        
+        .card-icons {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 8px;
+        }
+        
+        .card-icon {
+            width: 32px;
+            height: 20px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .visa {
+            background: #1A1F71;
+            color: white;
+        }
+        
+        .mastercard {
+            background: linear-gradient(to right, #EB001B 50%, #F79E1B 50%);
+            color: white;
+        }
+        
+        .amex {
+            background: #006FCF;
+            color: white;
+        }
+        
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .save-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #0066CC;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0066CC;
+        }
+        
+        .checkbox-label {
+            font-size: 14px;
+            color: #495057;
+            cursor: pointer;
+        }
+        
+        .price-summary {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+        
+        .price-label {
+            color: #495057;
+        }
+        
+        .price-value {
+            color: #212529;
+            font-weight: 500;
+        }
+        
+        .price-divider {
+            border-top: 1px dashed #DEE2E6;
+            margin: 12px 0;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            font-weight: 600;
+            color: #212529;
+        }
+        
+        .terms-agreement {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #495057;
+        }
+        
+        .terms-link {
+            color: #0066CC;
+            text-decoration: none;
+        }
+        
+        .bottom-section {
+            background: white;
+            padding: 20px;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .pay-button {
+            width: 100%;
+            padding: 18px;
+            background: #0066CC;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,102,204,0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .pay-button:hover {
+            background: #0052a3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,102,204,0.4);
+        }
+        
+        .pay-button:active {
+            transform: scale(0.98);
+        }
+        
+        .security-badges {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 16px;
+        }
+        
+        .badge {
+            font-size: 12px;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="device-frame">
+        <div class="screen">
+            <div class="header">
+                <div class="header-top">
+                    <div class="back-btn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#212529" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                    </div>
+                    <h1 class="header-title">Payment</h1>
+                </div>
+                <div class="security-banner">
+                    <span class="lock-icon">🔒</span>
+                    <div class="security-text">
+                        <div class="security-title">Secure Payment</div>
+                        <div class="security-subtitle">Your payment info is encrypted & secure</div>
+                    </div>
+                    <div class="timer">09:47</div>
+                </div>
+            </div>
+            
+            <div class="content">
+                <div class="payment-methods">
+                    <h2 class="section-title">Popular Payment Methods</h2>
+                    <div class="method-grid">
+                        <div class="method-card">
+                            <div class="method-icon">📱</div>
+                            <div class="method-name">bKash</div>
+                        </div>
+                        <div class="method-card">
+                            <div class="method-icon">📱</div>
+                            <div class="method-name">Nagad</div>
+                        </div>
+                    </div>
+                    
+                    <h2 class="section-title" style="margin-top: 20px;">Cards & Banking</h2>
+                    <div class="method-grid">
+                        <div class="method-card method-full active">
+                            <div class="method-icon">💳</div>
+                            <div class="method-details">
+                                <div class="method-name">Credit/Debit Card</div>
+                                <div class="method-subtitle">Visa • Mastercard • Amex</div>
+                            </div>
+                        </div>
+                        <div class="method-card method-full">
+                            <div class="method-icon">🏦</div>
+                            <div class="method-details">
+                                <div class="method-name">Internet Banking</div>
+                                <div class="method-subtitle">All major banks</div>
+                            </div>
+                        </div>
+                        <div class="method-card method-full">
+                            <div class="method-icon">💵</div>
+                            <div class="method-details">
+                                <div class="method-name">Pay Later (EMI)</div>
+                                <div class="method-subtitle">3, 6, 12 months @ 0% interest</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-form">
+                    <h2 class="section-title">Card Details</h2>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Card Number <span class="required">*</span></label>
+                        <div class="card-number-input">
+                            <input type="text" class="input-field" placeholder="XXXX XXXX XXXX XXXX" style="padding-right: 120px;">
+                            <div class="card-icons">
+                                <div class="card-icon visa">VISA</div>
+                                <div class="card-icon mastercard">MC</div>
+                                <div class="card-icon amex">AMEX</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Name on Card <span class="required">*</span></label>
+                        <input type="text" class="input-field" placeholder="As shown on card">
+                    </div>
+                    
+                    <div class="row">
+                        <div class="form-group">
+                            <label class="form-label">Expiry <span class="required">*</span></label>
+                            <input type="text" class="input-field" placeholder="MM/YY">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">CVV <span class="required">*</span></label>
+                            <input type="text" class="input-field" placeholder="XXX">
+                        </div>
+                    </div>
+                    
+                    <div class="save-card">
+                        <div class="checkbox">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
+                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                            </svg>
+                        </div>
+                        <label class="checkbox-label">Save card securely for faster checkout</label>
+                    </div>
+                </div>
+                
+                <div class="price-summary">
+                    <h2 class="section-title">Fare Breakdown</h2>
+                    <div class="price-row">
+                        <span class="price-label">Base Fare</span>
+                        <span class="price-value">৳2,800</span>
+                    </div>
+                    <div class="price-row">
+                        <span class="price-label">Taxes & Fees</span>
+                        <span class="price-value">৳600</span>
+                    </div>
+                    <div class="price-row">
+                        <span class="price-label">Service Fee</span>
+                        <span class="price-value">৳100</span>
+                    </div>
+                    <div class="price-divider"></div>
+                    <div class="total-row">
+                        <span>Total</span>
+                        <span>৳3,500</span>
+                    </div>
+                </div>
+                
+                <div class="terms-agreement">
+                    <div class="checkbox">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                    </div>
+                    <span>I agree to the <a href="#" class="terms-link">terms and conditions</a> and <a href="#" class="terms-link">fare rules</a></span>
+                </div>
+            </div>
+            
+            <div class="bottom-section">
+                <button class="pay-button">
+                    <span>Pay ৳3,500</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </button>
+                <div class="security-badges">
+                    <span class="badge">
+                        <span>🛡️</span>
+                        <span>PCI DSS Compliant</span>
+                    </span>
+                    <span class="badge">
+                        <span>🔐</span>
+                        <span>SSL Secured</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
